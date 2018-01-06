@@ -7,6 +7,5 @@ import java.util.Map;
 
 public interface UserService {
 
-     @Transactional(readOnly = true)
      UserDO getUser(Map<String,Object> map);
 }

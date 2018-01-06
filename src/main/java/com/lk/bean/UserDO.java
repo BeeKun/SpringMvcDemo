@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class UserDO implements Serializable {
 
-    private static final long serialVesionId = 1L;
+    private static final long serialVersionUID = 1L;
 
     private String name;
 
