@@ -12,10 +12,12 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 消费情况控制层
@@ -34,17 +37,17 @@ import java.util.Map;
 public class UserController {
 	private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
-	private static final int pageSize = 5;
+	private static final int pageSize = 2;
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private CostInfoService costInfoService;
 	
-	@RequestMapping("/hello")
+	@RequestMapping("/costAddPage")
 	public String Hello(ModelMap model) {
 		logger.debug("-------------进入方法成功!-----------------------");
 		model.addAttribute("name", "dashuaibi");
-		return "hello";
+		return "costAddInit";
 	}
 
 	/**
@@ -56,7 +59,8 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping("/costInfoPage")
-	public String showCostInfoPage(ModelMap model , int pageNum){
+	public String showCostInfoPage(ModelMap model, @RequestParam(defaultValue="1") int pageNum){
+		//开始分页,默认初始页数为1,size为自己定义
 		PageHelper.startPage(pageNum,pageSize);
 		Map<String,Object> reqMap = new HashMap<>();
 		List<CostInfoDO> costInfoDOList = costInfoService.selectCostInfoByMap(reqMap);
@@ -76,8 +80,9 @@ public class UserController {
 	 */
 	@RequestMapping("/addCostInfo")
 	@ResponseBody
-	public ModelMap addUser(HttpServletRequest request) throws IOException, ServletException {
+	public ModelMap addCostInfo(HttpServletRequest request) throws IOException, ServletException {
 		ModelMap map = new ModelMap();
+		Map<String,Object> reqMap = new HashMap<>();
 		try {
 			DiskFileItemFactory factory = new DiskFileItemFactory();
 			factory.setSizeThreshold(1024 * 100);
@@ -91,6 +96,7 @@ public class UserController {
 			for (FileItem fileItem : fileList) {
 				if (fileItem.isFormField()) {
 					logger.debug(fileItem.getFieldName() + "=" + fileItem.getString("utf-8"));
+					reqMap.put(fileItem.getFieldName(),fileItem.getString("utf-8"));
 				} else {
 					String fileName = fileItem.getName();
 					long now = System.currentTimeMillis();
@@ -106,17 +112,36 @@ public class UserController {
 					logger.info("File load success.");
 					inputStream.close();
 					fos.close();
-					map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
-					map.put(Constant.DATA_MSG,Constant.UPLOAD_FILE_SUCCESS);
-					return map;
 				}
 			}
+			if(insertCostInfo(reqMap)){
+				map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
+				map.put(Constant.DATA_MSG,Constant.UPLOAD_FILE_SUCCESS);
+				return map;
+			}
+			map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
+			map.put(Constant.DATA_MSG,Constant.UPLOAD_FILE_FAIL);
+			return map;
 		}catch (Exception e){
 			e.printStackTrace();
 			map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
 			map.put(Constant.DATA_MSG,Constant.UPLOAD_FILE_FAIL);
 			return map;
 		}
-		return null;
+	}
+
+	/**
+	 * 消费信息存入数据库中
+	 * @date 2018-01-07
+	 * @param reqMap
+	 * @return
+	 */
+	private boolean insertCostInfo(Map<String,Object> reqMap){
+		reqMap.put("id", UUID.randomUUID().toString());
+		int count = costInfoService.addCostInfo(reqMap);
+		if (count > 0)
+			return true;
+		else
+			return false;
 	}
 }

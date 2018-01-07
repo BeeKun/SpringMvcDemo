@@ -15,7 +15,7 @@
     <mvc:resources location="/WEB-INF/js/" mapping="/js/**"/>
     <bean name="dataSource"  class="org.springframework.jdbc.datasource.DriverManagerDataSource"
           p:driverClassName="com.mysql.jdbc.Driver"
-          p:url="jdbc:mysql://localhost:3306/test"
+          p:url="jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=UTF-8"
           p:username="root"
           p:password="123456"/>
 

@@ -13,11 +13,10 @@
 <body>
 <form class="" action="/addCostInfo" enctype="multipart/form-data" method="post" id="commitForm">
     <div class="form-inline">
-        消费类型:<input type="text" class="form-control" id="costType" name="costType">
-        消费金额:
-        <input type="text" class="form-control" id="costMoney" name="costMoney">
-        消费时间:
-        <input type="text" class="form-control form_datetime" id="costTime" name="costTime" readonly>
+        消费金额:<input type="text" class="form-control" id="costMoney" name="costMoney">
+        消费类型:<input type="text" class="form-control" id="costDescription" name="costDescription">
+        消费地点:<input type="text" class="form-control" id="costAddress" name="costAddress">
+        消费时间:<input type="text" class="form-control form_datetime" id="costTime" name="costTime" readonly>
     </div>
     <div class="form-group">
         爆照:<input type="file" id="costFile" name="costFile">

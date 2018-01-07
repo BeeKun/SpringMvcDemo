@@ -26,4 +26,10 @@ public class CostInfoServiceImpl implements CostInfoService {
     public int updateCostInfoByMap(Map<String, Object> reqMap) {
         return costInfoDao.updateCostInfoByMap(reqMap);
     }
+
+    @Override
+    @Transactional
+    public int addCostInfo(Map<String,Object> reqMap){
+        return costInfoDao.addCostInfo(reqMap);
+    }
 }

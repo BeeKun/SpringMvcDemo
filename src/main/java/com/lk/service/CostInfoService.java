@@ -15,4 +15,6 @@ public interface CostInfoService {
     List<CostInfoDO> selectCostInfoByMap(Map<String,Object> reqMap);
 
     int updateCostInfoByMap(Map<String,Object> reqMap);
+
+    int addCostInfo(Map<String,Object> reqMap);
 }
