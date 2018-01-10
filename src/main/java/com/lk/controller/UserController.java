@@ -10,10 +10,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 消费情况控制层
@@ -38,10 +38,14 @@ public class UserController {
 	private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	private static final int pageSize = 2;
+
+	private static final long CACHE_TIME = 10;
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private CostInfoService costInfoService;
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
 	
 	@RequestMapping("/costAddPage")
 	public String Hello(ModelMap model) {
@@ -87,7 +91,8 @@ public class UserController {
 			DiskFileItemFactory factory = new DiskFileItemFactory();
 			factory.setSizeThreshold(1024 * 100);
 			//得到上传文件的保存目录，将上传的文件存放于WEB-INF目录下，不允许外界直接访问，保证上传文件的安全
-			String savePath = request.getServletContext().getRealPath("/WEB-INF/upload");
+			String savePath = "E:\\uploadPicture";
+			System.out.println(savePath);
 			ServletFileUpload upload = new ServletFileUpload(factory);
 			upload.setHeaderEncoding("utf-8");
 			upload.setFileSizeMax(1024 * 1024);
@@ -99,10 +104,14 @@ public class UserController {
 					reqMap.put(fileItem.getFieldName(),fileItem.getString("utf-8"));
 				} else {
 					String fileName = fileItem.getName();
-					long now = System.currentTimeMillis();
 					InputStream inputStream = fileItem.getInputStream();
-					File file = new File(savePath + now+fileName);
-					file.createNewFile();
+					String pictureName = System.currentTimeMillis()+ fileName;
+					reqMap.put("costPictureName",pictureName);
+					File file = new File(savePath,pictureName);
+//					// 如果文件夹不存在则创建
+//					if (!file.isDirectory()){
+//						file.mkdir();
+//					}
 					FileOutputStream fos = new FileOutputStream(file);
 					byte temp[] = new byte[1024];
 					int size;
@@ -127,6 +136,65 @@ public class UserController {
 			map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
 			map.put(Constant.DATA_MSG,Constant.UPLOAD_FILE_FAIL);
 			return map;
+		}
+	}
+
+	/**
+	 * 查询该数据是否有上传文件
+	 * @return
+	 */
+	@RequestMapping("/checkPicture")
+	@ResponseBody
+	public ModelMap checkUploadPictureOrNot(String id) throws IOException {
+		ModelMap map = new ModelMap();
+		Map<String,Object> reqMap = new HashMap<>();
+		reqMap.put("id",id);
+		List<CostInfoDO> costList = costInfoService.selectCostInfoByMap(reqMap);
+		if (Objects.isNull(costList)){
+			map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
+			map.put(Constant.DATA_MSG,Constant.SEARCH_MESSAGE_FAIL);
+			return map;
+		}
+		String costPictureName = costList.get(0).getCostPictureName();
+		if (StringUtils.isBlank(costPictureName)){
+			map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
+			map.put(Constant.DATA_MSG,Constant.SEARCH_MESSAGE_FAIL);
+			return map;
+		}
+		//将对应id的图片名称存进redis中,设置缓存时间为10s
+		redisTemplate.opsForValue().set(id,costPictureName,CACHE_TIME,TimeUnit.SECONDS);
+		map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
+		return map;
+	}
+
+	/**
+	 * 下载图片详情
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/downLoadPicture")
+	public void downLoadPicture(HttpServletRequest request, HttpServletResponse response)throws IOException {
+		//从redis中获取指定对象的图片名称
+		String fileName = redisTemplate.opsForValue().get(request.getParameter("id").toString()).toString();
+		//设置文件MIME类型
+		response.setContentType(request.getServletContext().getMimeType(fileName));
+		//设置Content-Disposition
+		response.setHeader("Content-Disposition", "attachment;filename="+fileName);
+		String fullFilePathName = "E:\\uploadPicture\\"+fileName;
+		InputStream in = new FileInputStream(fullFilePathName);
+		OutputStream out = response.getOutputStream();
+		//写文件
+		try {
+			int b;
+			while((b=in.read())!= -1) {
+				out.write(b);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			in.close();
+			out.close();
 		}
 	}
 

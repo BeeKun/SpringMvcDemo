@@ -23,20 +23,22 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <table class="table table-honver">
+        <div class="col-md-10">
+            <table class="table table-bordered table-hover">
                 <tr>
                     <th>消费金额</th>
                     <th>消费明细</th>
                     <th>消费地址</th>
                     <th>消费时间</th>
+                    <th>明细照片</th>
                 </tr>
                 <c:forEach items="${costInfoDOList}" var="costInfo">
                     <tr>
-                        <td>${costInfo.costMoney }</td>
+                        <td>${costInfo.costMoney }元</td>
                         <td>${costInfo.costDescription }</td>
                         <td>${costInfo.costAddress }</td>
                         <td><fmt:formatDate value="${costInfo.costTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                        <td><button type="button" class="btn btn-primary" onclick="downLoadPicture('${costInfo.id}')">下载</button></td>
                         <td style="display: none;">${costInfo.id }</td>
                     </tr>
                 </c:forEach>
@@ -87,5 +89,20 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    //照片下载方法
+    function downLoadPicture(id){
+        $.post('checkPicture',{"id":id},function(data){
+            if (data.code == "00"){
+                window.location.href='downLoadPicture?id='+id;
+            }else {
+                alert(data.msg);
+            }
+
+        });
+
+
+    }
+</script>
 </body>
 </html>

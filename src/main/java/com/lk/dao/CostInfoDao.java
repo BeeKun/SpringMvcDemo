@@ -14,4 +14,6 @@ public interface CostInfoDao {
     int updateCostInfoByMap(Map<String, Object> reqMap);
 
     int addCostInfo(Map<String, Object> reqMap);
+
+    int checkUploadPictureOrNot(Map<String, Object> reqMap);
 }

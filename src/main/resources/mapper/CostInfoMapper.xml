@@ -36,12 +36,21 @@
             <if test="costTime !=null and costTime !=''">
                 AND costTime = #{costTime,jdbcType=TIMESTAMP}
             </if>
+            <if test="costPictureName !=null and costPictureName !=''">
+                AND costPictureName = #{costPictureName,jdbcType=VARCHAR}
+            </if>
         </set>
         WHERE id = #{id,jdbcType=VARCHAR}
     </update>
 
     <insert id="addCostInfo" parameterType="java.util.Map">
-        INSERT INTO COST_INFO (`id`, `costMoney`, `costDescription`, `costAddress`, `costTime`) VALUES
-        (#{id,jdbcType=VARCHAR}, #{costMoney,jdbcType=NUMERIC}, #{costDescription,jdbcType=VARCHAR}, #{costAddress,jdbcType=VARCHAR},#{costTime,jdbcType=TIMESTAMP});
+        INSERT INTO `test`.`cost_info` (`id`, `costMoney`, `costDescription`, `costAddress`, `costTime`, `costPictureName`, `EXT1`, `EXT2`)
+          VALUES
+        (#{id,jdbcType=VARCHAR}, #{costMoney,jdbcType=NUMERIC}, #{costDescription,jdbcType=VARCHAR}, #{costAddress,jdbcType=VARCHAR},
+        #{costTime,jdbcType=TIMESTAMP},#{costPictureName,jdbcType=VARCHAR},#{EXT1,jdbcType=VARCHAR},#{EXT2,jdbcType=NUMERIC});
     </insert>
+
+    <select id="checkUploadPictureOrNot" resultType="java.lang.String" parameterType="java.util.Map">
+        SELECT costPictureName FROM COST_INFO WHERE 1=1 AND id = #{id,jdbcType=VARCHAR}
+    </select>
 </mapper>

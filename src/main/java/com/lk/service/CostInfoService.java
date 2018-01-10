@@ -17,4 +17,6 @@ public interface CostInfoService {
     int updateCostInfoByMap(Map<String,Object> reqMap);
 
     int addCostInfo(Map<String,Object> reqMap);
+
+    int checkUploadPictureOrNot (Map<String,Object> reqMap);
 }

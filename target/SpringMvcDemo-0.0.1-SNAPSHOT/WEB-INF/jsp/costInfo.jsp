@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <link rel="stylesheet" href="../css/bootstrap.min.css" />
 <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
@@ -18,26 +19,27 @@
 <div class="cntainer">
     <div class="row">
         <div class="col-md-12">
-            <h1>人员列表</h1>
+            <h1>消费列表</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <table class="table table-honver">
+        <div class="col-md-10">
+            <table class="table table-bordered table-hover">
                 <tr>
-                    <th>id</th>
-                    <th>名字</th>
-                    <th>年龄</th>
-                    <th>级别</th>
+                    <th>消费金额</th>
+                    <th>消费明细</th>
+                    <th>消费地址</th>
+                    <th>消费时间</th>
+                    <th>明细照片</th>
                 </tr>
-                <c:forEach items="${listUser}" var="emp">
+                <c:forEach items="${costInfoDOList}" var="costInfo">
                     <tr>
-                        <td>${emp.id }</td>
-                        <td>${emp.name }</td>
-                        <td>${emp.age }</td>
-                        <td>${emp.grade }</td>
-                        <td><button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span>增加</button></td>
-                        <td><button class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-trash"></span>删除</button></td>
+                        <td>${costInfo.costMoney }元</td>
+                        <td>${costInfo.costDescription }</td>
+                        <td>${costInfo.costAddress }</td>
+                        <td><fmt:formatDate value="${costInfo.costTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                        <td><button type="button" class="btn btn-primary" onclick="downLoadPicture('${costInfo.id}')">下载</button></td>
+                        <td style="display: none;">${costInfo.id }</td>
                     </tr>
                 </c:forEach>
             </table>
@@ -53,11 +55,11 @@
             <nav aria-lable="Page navigation">
                 <ul class="pagination">
 
-                    <li><a href="${path }/user/getUserList.do?pageNum=1">首页</a></li>
+                    <li><a href="${path }/user/costInfoPage?pageNum=1">首页</a></li>
 
                     <c:if test="${pageInfo.hasPreviousPage  }">
                         <li>
-                            <a href="${path }/user/getUserList.do?pageNum=${pageInfo.pageNum-1}" aria-label="Previous">
+                            <a href="${path }/user/costInfoPage?pageNum=${pageInfo.pageNum-1}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -65,27 +67,42 @@
 
                     <c:forEach items="${pageInfo.navigatepageNums  }" var="page">
                         <c:if test="${page==pageInfo.pageNum }">
-                            <li class="active"><a href="${path }/user/getUserList.do?pageNum=${page}">${page}</a></li>
+                            <li class="active"><a href="${path }/user/costInfoPage?pageNum=${page}">${page}</a></li>
                         </c:if>
                         <c:if test="${page!=pageInfo.pageNum }">
-                            <li><a href="${path }/user/getUserList.do?pageNum=${page}">${page}</a></li>
+                            <li><a href="${path }/user/costInfoPage?pageNum=${page}">${page}</a></li>
                         </c:if>
                     </c:forEach>
 
                     <c:if test="${pageInfo.hasNextPage }">
                         <li>
-                            <a href="${path }/user/getUserList.do?pageNum=${pageInfo.pageNum+1 }" aria-label="Next">
+                            <a href="${path }/user/costInfoPage?pageNum=${pageInfo.pageNum+1 }" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
                     </c:if>
 
-                    <li><a href="${path }/user/getUserList.do?pageNum=${pageInfo.pages}">末页</a></li>
+                    <li><a href="${path }/user/costInfoPage?pageNum=${pageInfo.pages}">末页</a></li>
 
                 </ul>
             </nav>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    //照片下载方法
+    function downLoadPicture(id){
+        $.post('checkPicture',{"id":id},function(data){
+            if (data.code == "00"){
+                window.location.href='downLoadPicture?id='+id;
+            }else {
+                alert(data.msg);
+            }
+
+        });
+
+
+    }
+</script>
 </body>
 </html>

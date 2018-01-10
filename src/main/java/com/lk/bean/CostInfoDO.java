@@ -17,6 +17,8 @@ public class CostInfoDO implements Serializable {
 
     private Date costTime;
 
+    private String costPictureName;
+
     public String getId() {
         return id;
     }
@@ -55,5 +57,13 @@ public class CostInfoDO implements Serializable {
 
     public void setCostTime(Date costTime) {
         this.costTime = costTime;
+    }
+
+    public String getCostPictureName() {
+        return costPictureName;
+    }
+
+    public void setCostPictureName(String costPictureName) {
+        this.costPictureName = costPictureName;
     }
 }

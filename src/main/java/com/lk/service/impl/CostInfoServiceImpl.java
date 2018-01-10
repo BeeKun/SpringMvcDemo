@@ -32,4 +32,9 @@ public class CostInfoServiceImpl implements CostInfoService {
     public int addCostInfo(Map<String,Object> reqMap){
         return costInfoDao.addCostInfo(reqMap);
     }
+
+    @Override
+    public int checkUploadPictureOrNot(Map<String, Object> reqMap) {
+        return 0;
+    }
 }
