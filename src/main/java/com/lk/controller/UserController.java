@@ -6,6 +6,7 @@ import com.lk.bean.Constant;
 import com.lk.bean.CostInfoDO;
 import com.lk.service.CostInfoService;
 import com.lk.service.UserService;
+import net.sf.json.JSONArray;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -36,10 +39,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/user")
 public class UserController {
 	private static Logger logger = LoggerFactory.getLogger(UserController.class);
+	//将常量数据用spring从配置文件中读取出来
+	@Value("${pageSize}")
+	private int pageSize;
+	@Value("${cacheTime}")
+	private long cacheTime;
 
-	private static final int pageSize = 2;
-
-	private static final long CACHE_TIME = 10;
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -66,11 +72,15 @@ public class UserController {
 	public String showCostInfoPage(ModelMap model, @RequestParam(defaultValue="1") int pageNum){
 		//开始分页,默认初始页数为1,size为自己定义
 		PageHelper.startPage(pageNum,pageSize);
+		//TODO  此处有bug,后期需要修改
 		Map<String,Object> reqMap = new HashMap<>();
 		List<CostInfoDO> costInfoDOList = costInfoService.selectCostInfoByMap(reqMap);
+		List<CostInfoDO> dailyCostList = costInfoService.selectDailyCostMoney(reqMap);
+		JSONArray array = getDailyCost( dailyCostList);
 		PageInfo<CostInfoDO> pageInfo = new PageInfo<>(costInfoDOList);
 		model.addAttribute("costInfoDOList",costInfoDOList);
 		model.addAttribute("pageInfo",pageInfo);
+		model.addAttribute("array",array);
 		return "costInfo";
 	}
 
@@ -162,7 +172,7 @@ public class UserController {
 			return map;
 		}
 		//将对应id的图片名称存进redis中,设置缓存时间为10s
-		redisTemplate.opsForValue().set(id,costPictureName,CACHE_TIME,TimeUnit.SECONDS);
+		redisTemplate.opsForValue().set(id,costPictureName,cacheTime,TimeUnit.SECONDS);
 		map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
 		return map;
 	}
@@ -211,5 +221,19 @@ public class UserController {
 			return true;
 		else
 			return false;
+	}
+
+	private JSONArray getDailyCost(List<CostInfoDO> dailyCostList){
+		List<Integer> costMoneyList = new ArrayList<>();
+		List<String> costTimeList = new ArrayList<>();
+		for (CostInfoDO costInfoDO : dailyCostList){
+			costMoneyList.add(costInfoDO.getCostMoney());
+			costTimeList.add(sdf.format(costInfoDO.getCostTime()));
+		}
+		JSONArray array = new JSONArray();
+		array.add(costMoneyList);
+		array.add(costTimeList);
+		System.out.println(array.toString());
+		return array;
 	}
 }

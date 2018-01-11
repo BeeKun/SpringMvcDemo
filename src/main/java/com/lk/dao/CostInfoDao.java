@@ -16,4 +16,6 @@ public interface CostInfoDao {
     int addCostInfo(Map<String, Object> reqMap);
 
     int checkUploadPictureOrNot(Map<String, Object> reqMap);
+
+    List<CostInfoDO> selectDailyCostMoney(Map<String, Object> reqMap);
 }

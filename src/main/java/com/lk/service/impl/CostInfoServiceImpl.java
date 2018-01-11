@@ -35,6 +35,11 @@ public class CostInfoServiceImpl implements CostInfoService {
 
     @Override
     public int checkUploadPictureOrNot(Map<String, Object> reqMap) {
-        return 0;
+        return costInfoDao.checkUploadPictureOrNot(reqMap);
+    }
+
+    @Override
+    public List<CostInfoDO> selectDailyCostMoney(Map<String, Object> reqMap) {
+        return costInfoDao.selectDailyCostMoney(reqMap);
     }
 }

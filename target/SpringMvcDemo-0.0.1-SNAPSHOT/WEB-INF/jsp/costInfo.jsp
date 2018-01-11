@@ -12,6 +12,7 @@
 <script type="text/javascript" src="../js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/echarts.js"></script>
 <%
     pageContext.setAttribute("path", request.getContextPath());
 %>
@@ -88,8 +89,59 @@
             </nav>
         </div>
     </div>
+    <div id="showAxis" style="width: 83.33%;height: 500px;"></div>
+
 </div>
 <script type="text/javascript">
+    $(document).ready(function() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('showAxis'));
+        option = {
+            title: {
+                text: '消费折线图'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['消费明细']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data:${array[1]}
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name:'消费明细',
+                    type:'line',
+                    stack: '总量',
+                    data:${array[0]}
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    });
+    
+    function getEchartsData() {
+        //showAxis
+    }
+
     //照片下载方法
     function downLoadPicture(id){
         $.post('checkPicture',{"id":id},function(data){

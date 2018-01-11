@@ -19,6 +19,7 @@
         <if test="costEndTime !=null and costEndTime !=''">
             AND costTime  &lt;= #{costEndTime,jdbcType=TIMESTAMP}
         </if>
+        ORDER BY costTime DESC
     </select>
 
     <update id="updateCostInfoByMap" parameterType="java.util.Map">
@@ -52,5 +53,26 @@
 
     <select id="checkUploadPictureOrNot" resultType="java.lang.String" parameterType="java.util.Map">
         SELECT costPictureName FROM COST_INFO WHERE 1=1 AND id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectDailyCostMoney" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
+        SELECT sum(costMoney) costMoney, DATE_FORMAT(costTime,'%Y-%m-%d') costTime
+        FROM cost_info
+        <if test="id !=null and id !=''">
+            AND id = #{id,jdbcType=VARCHAR}
+        </if>
+        <if test="costMoney !=null and costMoney !=''">
+            AND costMoney = #{costMoney,jdbcType=NUMERIC}
+        </if>
+        <if test="costDescription !=null and costDescription !=''">
+            AND costDescription = #{costDescription,jdbcType=VARCHAR}
+        </if>
+        <if test="costBeginTime !=null and costBeginTime !=''">
+            AND costTime >= #{costBeginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="costEndTime !=null and costEndTime !=''">
+            AND costTime  &lt;= #{costEndTime,jdbcType=TIMESTAMP}
+        </if>
+        GROUP BY DATE_FORMAT(costTime,'%Y-%m-%d')
     </select>
 </mapper>
