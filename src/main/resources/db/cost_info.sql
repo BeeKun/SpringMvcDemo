@@ -30,3 +30,10 @@ CREATE TABLE `cost_info` (
   `EXT2` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户编号',
+  `account` varchar(25) DEFAULT NULL COMMENT '用户账号',
+  `password` varchar(50) DEFAULT NULL COMMENT '用户密码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

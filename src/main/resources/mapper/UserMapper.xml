@@ -3,6 +3,14 @@
 <mapper namespace="com.lk.dao.UserDao">
 
     <select id="getUser" resultType="com.lk.bean.UserDO" parameterType="java.util.Map">
-        SELECT * FROM user WHERE name=#{name,jdbcType=VARCHAR }
+        SELECT * FROM user WHERE account=#{account,jdbcType=VARCHAR }
     </select>
+
+    <insert id="insert" parameterType="com.lk.bean.UserDO">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user (account, password)
+        values (#{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+    </insert>
 </mapper>

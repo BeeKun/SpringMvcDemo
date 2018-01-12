@@ -15,4 +15,12 @@ public class Constant {
 
     public static final String SEARCH_MESSAGE_FAIL = "任务不存在!";
 
+    public static final String SIGN_UP_FAIL = "注册失败!";
+
+    public static final String SIGN_UP_SUCCESS = "注册成功!";
+
+    public static final String LOGIN_SUCCESS = "登录成功!";
+
+    public static final String LOGIN_FAIL = "登录失败,用户名或密码错误!";
+
 }
