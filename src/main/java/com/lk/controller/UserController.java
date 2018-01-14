@@ -5,6 +5,7 @@ import com.lk.bean.DTO.UserDTO;
 import com.lk.bean.UserDO;
 import com.lk.service.UserService;
 import com.lk.util.MD5Util;
+import com.lk.util.RedisCache;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -106,6 +107,7 @@ public class UserController {
         if (checkPassword){
 //            redisTemplate.opsForList().rightPushAll()
 //                    set("user",user,86400, TimeUnit.SECONDS);
+            user = userService.getUser(reqMap);
             map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
             map.put(Constant.DATA_MSG,Constant.LOGIN_SUCCESS);
            // map.put("account",(UserDO)redisTemplate.opsForValue().get("user").)

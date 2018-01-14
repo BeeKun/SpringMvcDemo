@@ -8,7 +8,6 @@ import java.util.Map;
 
 public interface UserService {
 
-     @Cacheable
      UserDO getUser(Map<String,Object> map);
 
      int insertUser(UserDO userDO);

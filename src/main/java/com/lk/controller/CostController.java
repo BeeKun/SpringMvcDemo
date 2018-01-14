@@ -131,6 +131,11 @@ public class CostController {
 			factory.setSizeThreshold(1024 * 100);
 			//得到上传文件的保存目录，将上传的文件存放于WEB-INF目录下，不允许外界直接访问，保证上传文件的安全
 			String savePath = "E:\\uploadPicture";
+			File fileOrigin = new File(savePath);
+			// 如果文件夹不存在则创建
+			if (!fileOrigin.isDirectory()){
+				fileOrigin.mkdir();
+			}
 			System.out.println(savePath);
 			ServletFileUpload upload = new ServletFileUpload(factory);
 			upload.setHeaderEncoding("utf-8");
@@ -147,10 +152,6 @@ public class CostController {
 					String pictureName = System.currentTimeMillis()+ fileName;
 					reqMap.put("costPictureName",pictureName);
 					File file = new File(savePath,pictureName);
-//					// 如果文件夹不存在则创建
-//					if (!file.isDirectory()){
-//						file.mkdir();
-//					}
 					FileOutputStream fos = new FileOutputStream(file);
 					byte temp[] = new byte[1024];
 					int size;

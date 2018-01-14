@@ -37,4 +37,17 @@
                     class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
         </property>
     </bean>
+
+    <!-- spring自己的缓存管理器，这里定义了缓存位置名称 ，即注解中的value -->
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean class="com.lk.util.RedisCache">
+                    <property name="redisTemplate" ref="redisTemplate" />
+                    <property name="name" value="common"/>
+                    <!-- common名称要在类或方法的注解中使用 -->
+                </bean>
+            </set>
+        </property>
+    </bean>
 </beans>
