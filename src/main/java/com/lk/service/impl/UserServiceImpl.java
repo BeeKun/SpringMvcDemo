@@ -6,7 +6,6 @@ import com.lk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -16,6 +15,7 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserDao userDao;
 
+    @Override
     @Cacheable(value="common",key="#map")
     public UserDO getUser(Map<String, Object> map) {
         UserDO userDO = new UserDO();

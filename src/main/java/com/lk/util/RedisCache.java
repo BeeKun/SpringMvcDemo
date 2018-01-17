@@ -37,13 +37,11 @@ public class RedisCache implements Cache {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return this.name;
     }
 
     @Override
     public Object getNativeCache() {
-        // TODO Auto-generated method stub
         return this.redisTemplate;
     }
 
@@ -52,37 +50,30 @@ public class RedisCache implements Cache {
         System.out.println("从redis中取值...");
         final String keyf =  key.toString();
         Object object = null;
-        object = redisTemplate.execute(new RedisCallback<Object>() {
-            public Object doInRedis(RedisConnection connection)
-                    throws DataAccessException {
-                byte[] key = keyf.getBytes();
-                byte[] value = connection.get(key);
-                if (value == null) {
-                    return null;
-                }
-                return toObject(value);
+        object = redisTemplate.execute((RedisCallback<Object>) connection -> {
+            byte[] key1 = keyf.getBytes();
+            byte[] value = connection.get(key1);
+            if (value == null) {
+                return null;
             }
+            return toObject(value);
         });
         return (object != null ? new SimpleValueWrapper(object) : null);
     }
 
     @Override
     public void put(Object key, Object value) {
-        // TODO Auto-generated method stub
         System.out.println("put key");
         final String keyf = key.toString();
         final Object valuef = value;
-        redisTemplate.execute(new RedisCallback<Long>() {
-            public Long doInRedis(RedisConnection connection)
-                    throws DataAccessException {
-                byte[] keyb = keyf.getBytes();
-                byte[] valueb = toByteArray(valuef);
-                connection.set(keyb, valueb);
-                if (liveTime > 0) {
-                    connection.expire(keyb, liveTime);
-                }
-                return 1L;
+        redisTemplate.execute((RedisCallback<Long>) connection -> {
+            byte[] keyb = keyf.getBytes();
+            byte[] valueb = toByteArray(valuef);
+            connection.set(keyb, valueb);
+            if (liveTime > 0) {
+                connection.expire(keyb, liveTime);
             }
+            return 1L;
         });
     }
 
@@ -120,33 +111,22 @@ public class RedisCache implements Cache {
 
     @Override
     public void evict(Object key) {
-        // TODO Auto-generated method stub
         System.out.println("del key");
         final String keyf = key.toString();
-        redisTemplate.execute(new RedisCallback<Long>() {
-            public Long doInRedis(RedisConnection connection)
-                    throws DataAccessException {
-                return connection.del(keyf.getBytes());
-            }
-        });
+        redisTemplate.execute((RedisCallback<Long>) connection -> connection.del(keyf.getBytes()));
     }
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
         System.out.println("clear key");
-        redisTemplate.execute(new RedisCallback<String>() {
-            public String doInRedis(RedisConnection connection)
-                    throws DataAccessException {
-                connection.flushDb();
-                return "ok";
-            }
+        redisTemplate.execute((RedisCallback<String>) connection -> {
+            connection.flushDb();
+            return "ok";
         });
     }
 
     @Override
     public <T> T get(Object key, Class<T> type) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -157,7 +137,6 @@ public class RedisCache implements Cache {
 
     @Override
     public ValueWrapper putIfAbsent(Object key, Object value) {
-        // TODO Auto-generated method stub
         return null;
     }
 }

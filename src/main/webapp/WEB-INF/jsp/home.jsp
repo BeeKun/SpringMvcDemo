@@ -20,10 +20,10 @@
 <div style="width: 100%;">
     <ul class="nav nav-tabs nav-justified">
         <li class="active"><a href="##">首页</a></li>
-        <li><a href="##">用户登录</a></li>
-        <li><a href="##">用户注册</a></li>
-        <li><a href="##">消费录入</a></li>
-        <li><a href="##">消费统计</a></li>
+        <li><a href="/user/login">用户登录</a></li>
+        <li><a href="/user/signUp">用户注册</a></li>
+        <li><a href="/cost/costAddPage">消费录入</a></li>
+        <li><a href="/cost/costInfoPage">消费统计</a></li>
     </ul>
 </div>
 
