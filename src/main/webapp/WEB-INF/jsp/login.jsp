@@ -1,12 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+%>
 <html>
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-theme.min.css">
-<script type="text/javascript" src="../js/jquery.js"></script>
-<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="<%=basePath%>/css/bootstrap.min.css" />
+<link rel="stylesheet" href="<%=basePath%>/css/bootstrap-theme.min.css">
+<script type="text/javascript" src="<%=basePath%>/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/bootstrap.min.js"></script>
     <head>
         <title>用户登录</title>
     </head>
@@ -24,6 +28,13 @@
         <div class="col-sm-5">
             <input type="text" class="form-control" id="password" name="password">
         </div>
+
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">记住我:</label>
+        <div class="col-sm-5">
+            <input type="checkbox" class="form-control" id="rememberMe" name = "rememberMe" />
+        </div>
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
@@ -33,6 +44,10 @@
 </div>
 </body>
 <script type="text/javascript">
+    var rememberMe;
+    $("#rememberMe").on("change",function(){
+        rememberMe = $(this).is(":checked");
+    });
     function login() {
         var account = $('#account').val();
         var password = $('#password').val();
@@ -46,12 +61,12 @@
         }
         $.ajax({
             url:"/user/loginByUser",
-            data:{"account":account,"password":password},
+            data:{"account":account,"password":password,"rememberMe":rememberMe},
             type:"post",
             dataType : "json",
             success:function (data) {
                 if (data.code == "00"){
-                    window.location.href='';
+                    window.location.href='/user/home';
                 }
             }
         });

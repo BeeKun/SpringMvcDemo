@@ -19,7 +19,7 @@ public interface UserDao {
 
      UserDO selectByPrimaryKey(Integer id);
 
-     int updateByPrimaryKeySelective(UserDO record);
+     int updateByPrimaryKeySelective(UserDO userDO);
 
      int updateByPrimaryKey(UserDO record);
 

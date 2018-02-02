@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -16,8 +17,11 @@ public class UserServiceImpl implements UserService{
     private UserDao userDao;
 
     @Override
-    @Cacheable(value="common",key="#map")
-    public UserDO getUser(Map<String, Object> map) {
+    @Cacheable(value="common",key="#userName")
+    public UserDO login(String userName , String password) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("account",userName);
+        map.put("password",password);
         UserDO userDO = new UserDO();
         try{
             userDO = userDao.getUser(map);
@@ -31,5 +35,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public int insertUser(UserDO userDO) {
         return userDao.insert(userDO);
+    }
+
+    @Override
+    public int updateByPrimaryKeySelective(UserDO userDO) {
+        return 0;
     }
 }

@@ -8,7 +8,9 @@ import java.util.Map;
 
 public interface UserService {
 
-     UserDO getUser(Map<String,Object> map);
+     UserDO login(String userName,String password);
 
      int insertUser(UserDO userDO);
+
+     int updateByPrimaryKeySelective(UserDO userDO);
 }

@@ -4,8 +4,11 @@ import com.lk.bean.Constant;
 import com.lk.bean.DTO.UserDTO;
 import com.lk.bean.UserDO;
 import com.lk.service.UserService;
+import com.lk.shiro.token.manager.TokenManager;
 import com.lk.util.MD5Util;
 import com.lk.util.RedisCache;
+import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -71,8 +74,9 @@ public class UserController {
         return "signUp";
     }
 
-    @RequestMapping("/home")
+        @RequestMapping("/home")
     public String home(){
+            System.out.println("======================");
         return "home";
     }
 
@@ -98,23 +102,20 @@ public class UserController {
 
     @RequestMapping("/loginByUser")
     @ResponseBody
-    public ModelMap loginByUser(String account,String password) {
+    public ModelMap loginByUser(UserDO user,Boolean rememberMe) {
         ModelMap map = new ModelMap();
-        Map<String,Object> reqMap = new HashMap<>();
-        reqMap.put("account",account);
-        UserDO user = userService.getUser(reqMap);
-        boolean checkPassword = MD5Util.validatePassword(user.getPassword(),password);
-        if (checkPassword){
-//            redisTemplate.opsForList().rightPushAll()
-//                    set("user",user,86400, TimeUnit.SECONDS);
-            user = userService.getUser(reqMap);
+        try {
+            TokenManager.login(user,rememberMe);
             map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
             map.put(Constant.DATA_MSG,Constant.LOGIN_SUCCESS);
-           // map.put("account",(UserDO)redisTemplate.opsForValue().get("user").)
             return map;
+        }catch (DisabledAccountException e) {
+            map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
+            map.put(Constant.DATA_MSG, "帐号已经禁用。");
+        } catch (Exception e) {
+            map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
+            map.put(Constant.DATA_MSG, "帐号或密码错误");
         }
-        map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
-        map.put(Constant.DATA_MSG,Constant.LOGIN_FAIL);
         return map;
     }
 }

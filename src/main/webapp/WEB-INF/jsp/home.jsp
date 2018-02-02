@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <style>
@@ -47,8 +47,8 @@
             <div class="carousel-caption"></div>
         </div>
     </div>
-    <a class="carousel-control left" href="#circleContent" data-slide="prevent">‹</a>
-    <a class="carousel-control right" href="#circleContent" data-slide="next">›</a>
+    <a class="carousel-control left" href="#circleContent" data-slide="prevent"></a>
+    <a class="carousel-control right" href="#circleContent" data-slide="next"></a>
 </div>
 
 
