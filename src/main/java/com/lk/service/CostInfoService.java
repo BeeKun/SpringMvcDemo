@@ -16,9 +16,24 @@ public interface CostInfoService {
 
     int updateCostInfoByMap(Map<String,Object> reqMap);
 
+    /**
+     * 新增消费信息
+     * @param reqMap
+     * @return
+     */
     int addCostInfo(Map<String,Object> reqMap);
 
-    int checkUploadPictureOrNot (Map<String,Object> reqMap);
+    /**
+     * 校验是否有上传图片
+     * @param reqMap
+     * @return
+     */
+    List<CostInfoDO> checkUploadPictureOrNot (Map<String,Object> reqMap);
 
-    List<CostInfoDO> selectDailyCostMoney(Map<String,Object> reqMap);
+    /**
+     * 获取每日金额总和
+     * @param account
+     * @return
+     */
+    List<CostInfoDO> selectDailyCostMoney(String account);
 }

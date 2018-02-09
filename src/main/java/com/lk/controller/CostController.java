@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -68,24 +68,31 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/cost")
 public class CostController {
 	private static Logger logger = LoggerFactory.getLogger(UserController.class);
-	//将常量数据用spring从配置文件中读取出来
+	/**
+	 * 将常量数据用spring从配置文件中读取出来
+	 */
 	@Value("${pageSize}")
 	private int pageSize;
 	@Value("${cacheTime}")
 	private long cacheTime;
 
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	@Autowired
-	private UserService userService;
+	/**
+	 * 使用java 8 以上支持的time包中的转换方式,弃用simpleDateFormat
+	 */
+	private static final DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	private static final DateTimeFormatter sdfH = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@Autowired
 	private CostInfoService costInfoService;
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
-	
+
+	/**
+	 * 新增消费信息页面
+	 * @return
+	 */
 	@RequestMapping("/costAddPage")
-	public String Hello(ModelMap model) {
-		logger.debug("-------------进入方法成功!-----------------------");
-		model.addAttribute("name", "dashuaibi");
+	public String Hello() {
 		return "costAddInit";
 	}
 
@@ -101,11 +108,20 @@ public class CostController {
 	public String showCostInfoPage(ModelMap model, @RequestParam(defaultValue="1") int pageNum){
 		//开始分页,默认初始页数为1,size为自己定义
 		PageHelper.startPage(pageNum,pageSize);
+		Map<String,Object> reqMap = new HashMap<>(2);
 		//TODO  此处有bug,后期需要修改
-		Map<String,Object> reqMap = new HashMap<>();
+		//从redis中取出登录用户
+		String account = redisTemplate.opsForValue().get("account").toString();
+		reqMap.put("account",account);
+		//查询所有消费信息明细
 		List<CostInfoDO> costInfoDOList = costInfoService.selectCostInfoByMap(reqMap);
-		List<CostInfoDO> dailyCostList = costInfoService.selectDailyCostMoney(reqMap);
-		JSONArray array = getDailyCost( dailyCostList);
+		// 将转换好的时间存入临时temp中
+		for (CostInfoDO infoDO : costInfoDOList) {
+			infoDO.setDateTemp(infoDO.getCostTime().format(sdfH));
+		}
+		//查询当天消费信息金额总和
+		List<CostInfoDO> dailyCostList = costInfoService.selectDailyCostMoney(account);
+		JSONArray array = getDailyCost(dailyCostList);
 		PageInfo<CostInfoDO> pageInfo = new PageInfo<>(costInfoDOList);
 		model.addAttribute("costInfoDOList",costInfoDOList);
 		model.addAttribute("pageInfo",pageInfo);
@@ -126,6 +142,7 @@ public class CostController {
 	public ModelMap addCostInfo(HttpServletRequest request) throws IOException, ServletException {
 		ModelMap map = new ModelMap();
 		Map<String,Object> reqMap = new HashMap<>();
+		String costTime = request.getParameter("costTime");
 		try {
 			DiskFileItemFactory factory = new DiskFileItemFactory();
 			factory.setSizeThreshold(1024 * 100);
@@ -153,9 +170,10 @@ public class CostController {
 					reqMap.put("costPictureName",pictureName);
 					File file = new File(savePath,pictureName);
 					FileOutputStream fos = new FileOutputStream(file);
-					byte temp[] = new byte[1024];
+					byte[] temp = new byte[1024];
 					int size;
-					while ((size = inputStream.read(temp)) != -1) { // 每次读取1KB，直至读完
+					// 每次读取1KB，直至读完
+					while ((size = inputStream.read(temp)) != -1) {
 						fos.write(temp, 0, size);
 					}
 					logger.info("File load success.");
@@ -187,9 +205,10 @@ public class CostController {
 	@ResponseBody
 	public ModelMap checkUploadPictureOrNot(String id) throws IOException {
 		ModelMap map = new ModelMap();
-		Map<String,Object> reqMap = new HashMap<>();
+		Map<String,Object> reqMap = new HashMap<>(1);
 		reqMap.put("id",id);
-		List<CostInfoDO> costList = costInfoService.selectCostInfoByMap(reqMap);
+		//查询该id是否有上传图片
+		List<CostInfoDO> costList = costInfoService.checkUploadPictureOrNot(reqMap);
 		if (Objects.isNull(costList)){
 			map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
 			map.put(Constant.DATA_MSG,Constant.SEARCH_MESSAGE_FAIL);
@@ -246,11 +265,12 @@ public class CostController {
 	 */
 	private boolean insertCostInfo(Map<String,Object> reqMap){
 		reqMap.put("id", UUID.randomUUID().toString());
+		reqMap.put("account",redisTemplate.opsForValue().get("account"));
 		int count = costInfoService.addCostInfo(reqMap);
-		if (count > 0)
+		if (count > 0) {
 			return true;
-		else
-			return false;
+		}
+		return false;
 	}
 
 	private JSONArray getDailyCost(List<CostInfoDO> dailyCostList){

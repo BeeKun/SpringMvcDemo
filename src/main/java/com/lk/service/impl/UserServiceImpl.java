@@ -6,6 +6,7 @@ import com.lk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +34,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int insertUser(UserDO userDO) {
         return userDao.insert(userDO);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateByPrimaryKeySelective(UserDO userDO) {
-        return 0;
+        return userDao.updateByPrimaryKeySelective(userDO);
     }
 }

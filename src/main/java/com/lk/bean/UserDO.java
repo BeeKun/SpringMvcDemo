@@ -3,6 +3,7 @@ package com.lk.bean;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -16,9 +17,13 @@ public class UserDO implements Serializable {
 
     private static final long serialVersionUID = 34532345523432L;
 
-    //0:禁止登录
+    /**
+     *0:禁止登录
+     */
     public static final String FORBID_STATUS = "0";
-    //1:允许登录
+    /**
+     *1:允许登录
+     */
     public static final String ALLOW_STATUS = "1";
     /**
      * 用户编号
@@ -36,10 +41,10 @@ public class UserDO implements Serializable {
     private String password;
 
     /**创建时间*/
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**最后登录时间*/
-    private Date lastLoginTime;
+    private LocalDateTime lastLoginTime;
 
     /**1:有效，0:禁止登录*/
     private String status;
@@ -81,19 +86,19 @@ public class UserDO implements Serializable {
         this.password = password;
     }
 
-    public Date getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public Date getLastLoginTime() {
+    public LocalDateTime getLastLoginTime() {
         return lastLoginTime;
     }
 
-    public void setLastLoginTime(Date lastLoginTime) {
+    public void setLastLoginTime(LocalDateTime lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
     }
 
@@ -103,5 +108,17 @@ public class UserDO implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDO{" +
+                "id=" + id +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", createTime=" + createTime +
+                ", lastLoginTime=" + lastLoginTime +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

@@ -23,4 +23,7 @@ public class Constant {
 
     public static final String LOGIN_FAIL = "登录失败,用户名或密码错误!";
 
+    public static final String ACCOUNT_FORBIDDEN = "帐号已经禁用!";
+
+    public static final String UPDATE_ACCOUNTLOGINTIMELATEST_FAIL = "最新登录时间更新失败!";
 }

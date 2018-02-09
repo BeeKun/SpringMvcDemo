@@ -6,22 +6,25 @@ import com.lk.bean.UserDO;
 import com.lk.service.UserService;
 import com.lk.shiro.token.manager.TokenManager;
 import com.lk.util.MD5Util;
-import com.lk.util.RedisCache;
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.time.LocalDateTime;
 
 /**
+ * 最基本的登录注册操作
  * @author likun
  * @version V1.0
  * @Title: com.lk.controller
@@ -64,22 +67,39 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+    /**
+     * 登录页面
+     * @return
+     */
     @RequestMapping("/login")
     public String login(){
         return "login";
     }
 
+    /**
+     * 注册页面
+     * @return
+     */
     @RequestMapping("/signUp")
     public String signUp(){
         return "signUp";
     }
 
-        @RequestMapping("/home")
+    /**
+     * 主页
+     * @return
+     */
+    @RequestMapping("/home")
     public String home(){
-            System.out.println("======================");
         return "home";
     }
 
+    /**
+     * 注册账号
+     * @param userDTO
+     * @return
+     */
     @RequestMapping("/signUpWithInfo")
     @ResponseBody
     public ModelMap signUpWithInfo(UserDTO userDTO){
@@ -88,6 +108,7 @@ public class UserController {
         String passwordLocked =  MD5Util.encodeByMD5(userDTO.getPassword());
         UserDO user = new UserDO();
         BeanUtils.copyProperties(userDTO,user);
+        user.setCreateTime(LocalDateTime.now());
         user.setPassword(passwordLocked);
         int count = userService.insertUser(user);
         if (count<1){
@@ -100,21 +121,33 @@ public class UserController {
         return map;
     }
 
+    /**
+     * 登录,成功后将用户存入redis缓存中
+     * @param user
+     * @param rememberMe
+     * @return
+     */
     @RequestMapping("/loginByUser")
     @ResponseBody
     public ModelMap loginByUser(UserDO user,Boolean rememberMe) {
         ModelMap map = new ModelMap();
         try {
-            TokenManager.login(user,rememberMe);
+            UserDO userDO = TokenManager.login(user,rememberMe);
+           /**
+            * 看网上的资料参差不齐,redis缓存中的数据到底是否可以直接覆盖更新,我没有一一实验,不过在opsForValue中
+            * set方法是可以覆盖key的value的,不需要先调用delete方法
+            */
+            redisTemplate.opsForValue().set("account",userDO.getAccount());
+            logger.debug("=========================="+ redisTemplate.opsForValue().get("account"));
             map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
             map.put(Constant.DATA_MSG,Constant.LOGIN_SUCCESS);
             return map;
         }catch (DisabledAccountException e) {
             map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
-            map.put(Constant.DATA_MSG, "帐号已经禁用。");
-        } catch (Exception e) {
+            map.put(Constant.DATA_MSG, Constant.ACCOUNT_FORBIDDEN);
+        } catch (AccountException e) {
             map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
-            map.put(Constant.DATA_MSG, "帐号或密码错误");
+            map.put(Constant.DATA_MSG, Constant.LOGIN_FAIL);
         }
         return map;
     }

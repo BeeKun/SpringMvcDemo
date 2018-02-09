@@ -22,7 +22,8 @@ public class TokenManager {
      * @return
      */
     public static UserDO getToken(){
-        UserDO token = (UserDO) SecurityUtils.getSubject().getPrincipal();
+        UserDO token = new UserDO();
+        token.setAccount(SecurityUtils.getSubject().getPrincipal().toString());
         return token;
     }
 
