@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <html>
 <link rel="stylesheet" href="../css/bootstrap.min.css" />
 <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
@@ -21,6 +22,7 @@
     <div class="row">
         <div class="col-md-12">
             <h1>消费列表</h1>
+            <p>${costInfoDOList.get(0).account}</p>
         </div>
     </div>
     <div class="row">
@@ -38,7 +40,7 @@
                         <td>${costInfo.costMoney }元</td>
                         <td>${costInfo.costDescription }</td>
                         <td>${costInfo.costAddress }</td>
-                        <td><fmt:formatDate value="${costInfo.costTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                        <td> ${costInfo.dateTemp}</td>
                         <td><button type="button" class="btn btn-primary" onclick="downLoadPicture('${costInfo.id}')">下载</button></td>
                         <td style="display: none;">${costInfo.id }</td>
                     </tr>

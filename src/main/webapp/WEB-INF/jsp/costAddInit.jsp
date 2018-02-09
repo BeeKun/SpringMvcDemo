@@ -29,7 +29,7 @@
 </body>
 <script type="text/javascript">
     $(function () {
-        $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+        $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
 
         //ajaxSubmit 实现Form提交后回调
         var options = {
