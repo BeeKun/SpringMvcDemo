@@ -68,4 +68,16 @@
         </property>
 
     </bean>
+
+    <!--dateFormat  转化器 暂未使用-->
+    <mvc:annotation-driven conversion-service="conversionService"/>
+
+    <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <!-- <bean class="com.ll.model.StringToPersonConverter" /> -->
+            </list>
+        </property>
+    </bean>
 </beans>

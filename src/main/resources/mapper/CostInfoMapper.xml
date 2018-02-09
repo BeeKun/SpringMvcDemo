@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lk.dao.CostInfoDao">
-
+    <resultMap id="BaseResultMap" type="com.lk.bean.CostInfoDO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="account" property="account" jdbcType="VARCHAR" />
+        <result column="costMoney" property="costMoney" jdbcType="INTEGER" />
+        <result column="costDescription" property="costDescription" jdbcType="VARCHAR" />
+        <result column="costAddress" property="costAddress" jdbcType="VARCHAR" />
+        <result column="costTime" property="costTime" jdbcType="TIMESTAMP" />
+        <result column="costPictureName" property="costPictureName" jdbcType="VARCHAR" />
+    </resultMap>
     <select id="selectCostInfoByMap" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
         SELECT * FROM COST_INFO WHERE 1=1
         <if test="id !=null and id !=''">
            AND id = #{id,jdbcType=VARCHAR}
+        </if>
+        <if test="account !=null and account !=''">
+            AND account = #{account,jdbcType=VARCHAR}
         </if>
         <if test="costMoney !=null and costMoney !=''">
             AND costMoney = #{costMoney,jdbcType=NUMERIC}
@@ -25,6 +36,9 @@
     <update id="updateCostInfoByMap" parameterType="java.util.Map">
         UPDATE COST_INFO
         <set>
+            <if test="account !=null and account !=''">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
             <if test="costMoney !=null and costMoney !=''">
                 costMoney = #{costMoney,jdbcType=NUMERIC},
             </if>
@@ -35,31 +49,34 @@
                 costAddress = #{costAddress,jdbcType=VARCHAR},
             </if>
             <if test="costTime !=null and costTime !=''">
-                AND costTime = #{costTime,jdbcType=TIMESTAMP}
+                costTime = #{costTime,jdbcType=TIMESTAMP},
             </if>
             <if test="costPictureName !=null and costPictureName !=''">
-                AND costPictureName = #{costPictureName,jdbcType=VARCHAR}
+                costPictureName = #{costPictureName,jdbcType=VARCHAR}
             </if>
         </set>
         WHERE id = #{id,jdbcType=VARCHAR}
     </update>
 
     <insert id="addCostInfo" parameterType="java.util.Map">
-        INSERT INTO `test`.`cost_info` (`id`, `costMoney`, `costDescription`, `costAddress`, `costTime`, `costPictureName`, `EXT1`, `EXT2`)
+        INSERT INTO `cost_info` (`id`,`account`, `costMoney`, `costDescription`, `costAddress`, `costTime`, `costPictureName`, `EXT1`, `EXT2`)
           VALUES
-        (#{id,jdbcType=VARCHAR}, #{costMoney,jdbcType=NUMERIC}, #{costDescription,jdbcType=VARCHAR}, #{costAddress,jdbcType=VARCHAR},
+        (#{id,jdbcType=VARCHAR},#{account,jdbcType=VARCHAR}, #{costMoney,jdbcType=NUMERIC}, #{costDescription,jdbcType=VARCHAR}, #{costAddress,jdbcType=VARCHAR},
         #{costTime,jdbcType=TIMESTAMP},#{costPictureName,jdbcType=VARCHAR},#{EXT1,jdbcType=VARCHAR},#{EXT2,jdbcType=NUMERIC});
     </insert>
 
-    <select id="checkUploadPictureOrNot" resultType="java.lang.String" parameterType="java.util.Map">
+    <select id="checkUploadPictureOrNot" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
         SELECT costPictureName FROM COST_INFO WHERE 1=1 AND id = #{id,jdbcType=VARCHAR}
     </select>
 
     <select id="selectDailyCostMoney" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
         SELECT sum(costMoney) costMoney, DATE_FORMAT(costTime,'%Y-%m-%d') costTime
-        FROM cost_info
+        FROM cost_info WHERE 1=1
         <if test="id !=null and id !=''">
             AND id = #{id,jdbcType=VARCHAR}
+        </if>
+        <if test="account !=null and account !=''">
+            AND account = #{account,jdbcType=VARCHAR}
         </if>
         <if test="costMoney !=null and costMoney !=''">
             AND costMoney = #{costMoney,jdbcType=NUMERIC}

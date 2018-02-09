@@ -21,6 +21,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `cost_info`;
 CREATE TABLE `cost_info` (
   `id` varchar(50) NOT NULL COMMENT '主键UUID',
+  `account` varchar(50) DEFAULT NULL COMMENT '用户账号',
   `costMoney` int(10) DEFAULT NULL COMMENT '金额',
   `costDescription` varchar(255) DEFAULT NULL COMMENT '消费明细',
   `costAddress` varchar(255) DEFAULT NULL,
