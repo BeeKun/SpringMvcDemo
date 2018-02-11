@@ -110,6 +110,7 @@ public class UserController {
         BeanUtils.copyProperties(userDTO,user);
         user.setCreateTime(LocalDateTime.now());
         user.setPassword(passwordLocked);
+        // 新增用户数据
         int count = userService.insertUser(user);
         if (count<1){
             map.put(Constant.DATA_CODE,Constant.FAIL_CODE);
@@ -122,7 +123,7 @@ public class UserController {
     }
 
     /**
-     * 登录,成功后将用户存入redis缓存中
+     * 登录,成功后将用户名存入redis缓存中
      * @param user
      * @param rememberMe
      * @return
@@ -138,7 +139,7 @@ public class UserController {
             * set方法是可以覆盖key的value的,不需要先调用delete方法
             */
             redisTemplate.opsForValue().set("account",userDO.getAccount());
-            logger.debug("=========================="+ redisTemplate.opsForValue().get("account"));
+            logger.debug("=========================="+ redisTemplate.opsForValue().get("account")+"==========================");
             map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
             map.put(Constant.DATA_MSG,Constant.LOGIN_SUCCESS);
             return map;

@@ -11,16 +11,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 用户实现类
+ * @author likun
+ * @date 2018-02-09
+ */
 @Service
 public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserDao userDao;
 
+    /**
+     * 查询方法获取登录信息,由redis管理缓存
+     * @param userName
+     * @param password
+     * @return
+     */
     @Override
     @Cacheable(value="common",key="#userName")
     public UserDO login(String userName , String password) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(4);
         map.put("account",userName);
         map.put("password",password);
         UserDO userDO = new UserDO();

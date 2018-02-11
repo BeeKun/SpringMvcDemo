@@ -7,6 +7,7 @@ import com.lk.util.MD5Util;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -39,7 +40,15 @@ public class UserRealm extends AuthorizingRealm{
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+        String username = (String)principals.getPrimaryPrincipal();
+
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        // 根据用户登录名查询用户角色
+        //authorizationInfo.setRoles(userService .findRoles(username));
+        // 根据用户登录名查询用户权限
+        //authorizationInfo.setStringPermissions(userService.findPermissions(username));
+
+        return authorizationInfo;
     }
 
     /**
@@ -84,6 +93,7 @@ public class UserRealm extends AuthorizingRealm{
     /**
      * 指定principalCollection 清除
      */
+    @Override
     public void clearCachedAuthorizationInfo(PrincipalCollection principalCollection) {
         SimplePrincipalCollection principals = new SimplePrincipalCollection(
                 principalCollection, getName());
