@@ -53,7 +53,8 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
-    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!--对标注@Transactional注解的bean进行加工处理,以织入事务管理切面-->
+    <tx:annotation-driven />
 
     <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactory" />
