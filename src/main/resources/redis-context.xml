@@ -40,7 +40,7 @@
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
             <set>
-                <!--引入自己定义的缓存工具类--><!--引入自己定义的缓存工具类-->
+                <!--引入自己定义的redis缓存工具类-->
                 <bean class="com.lk.util.RedisCache">
                     <property name="redisTemplate" ref="redisTemplate" />
                     <!--自定义一个value为User的缓存-->
