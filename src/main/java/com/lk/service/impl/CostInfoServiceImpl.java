@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 消费信息明细
+ * @author likun
+ * @date 2018-03-22
+ */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class CostInfoServiceImpl implements CostInfoService {

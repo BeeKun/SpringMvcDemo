@@ -29,7 +29,8 @@ public class UserServiceImpl implements UserService{
      * @return
      */
     @Override
-    @Cacheable(value="common",key="#userName")
+    @Cacheable(value="User",key="#userName")
+    @Transactional(readOnly = true,rollbackFor = Exception.class)
     public UserDO login(String userName , String password) {
         Map<String, Object> map = new HashMap<>(4);
         map.put("account",userName);

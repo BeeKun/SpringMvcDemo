@@ -17,7 +17,7 @@
     <mvc:resources location="/WEB-INF/js/" mapping="/js/**"/>
     <mvc:resources location="/WEB-INF/img/" mapping="/img/**"/>
     <context:property-placeholder location="classpath:properties/*.properties"/>
-    <cache:annotation-driven cache-manager="cacheManager" />
+    <cache:annotation-driven />
     <import resource="classpath:redis-context.xml"/>
     <import resource="spring-shiro.xml"/>
     <bean name="dataSource"  class="org.springframework.jdbc.datasource.DriverManagerDataSource"
