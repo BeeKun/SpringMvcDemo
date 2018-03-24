@@ -1,5 +1,7 @@
 package com.lk.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.SimpleValueWrapper;
@@ -20,6 +22,8 @@ public class RedisCache implements Cache {
 
     @Value("${cacheTime}")
     private long liveTime;
+
+    private static  final Logger LOGGER = LoggerFactory.getLogger(RedisCache.class);
 
     private RedisTemplate<String, Object> redisTemplate;
     private String name;
@@ -47,7 +51,7 @@ public class RedisCache implements Cache {
 
     @Override
     public ValueWrapper get(Object key) {
-        System.out.println("从redis中取值...");
+        LOGGER.info("==============从redis中取值=====================");
         final String keyf =  key.toString();
         Object object = null;
         object = redisTemplate.execute((RedisCallback<Object>) connection -> {
@@ -63,7 +67,7 @@ public class RedisCache implements Cache {
 
     @Override
     public void put(Object key, Object value) {
-        System.out.println("put key");
+        LOGGER.info("==============向redis中存入数据=====================");
         final String keyf = key.toString();
         final Object valuef = value;
         redisTemplate.execute((RedisCallback<Long>) connection -> {
