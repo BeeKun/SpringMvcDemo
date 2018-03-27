@@ -3,11 +3,12 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * <p>Created by mayongbin01 on 2017/3/9.</p>
  */
-public class RedisTest extends ConfigTest {
+public class RedisTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
