@@ -20,11 +20,18 @@
     <cache:annotation-driven />
     <import resource="classpath:redis-context.xml"/>
     <import resource="spring-shiro.xml"/>
-    <bean name="dataSource"  class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+    <!--使用alibaba druid线程池,配置为默认配置-->
+    <bean name="dataSource"  class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close"
           p:driverClassName="com.mysql.jdbc.Driver"
           p:url="jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=UTF-8"
           p:username="root"
-          p:password="123456"/>
+          p:password="123456"
+          p:initialSize="0"
+          p:maxActive="1500"
+          p:testWhileIdle="false"
+          p:testOnBorrow="false"
+          p:testOnReturn="false"/>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
