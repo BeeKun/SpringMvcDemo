@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * 最基本的登录注册操作
@@ -139,6 +140,8 @@ public class UserController {
             * set方法是可以覆盖key的value的,不需要先调用delete方法
             */
             redisTemplate.opsForValue().set("account",userDO.getAccount());
+            redisTemplate.opsForList().set("activityList",0,new ArrayList<Integer>());
+            redisTemplate.opsForList().set("activityList",0,new ArrayList<Integer>());
             logger.debug("=========================="+ redisTemplate.opsForValue().get("account")+"==========================");
             map.put(Constant.DATA_CODE,Constant.SUCCESS_CODE);
             map.put(Constant.DATA_MSG,Constant.LOGIN_SUCCESS);
