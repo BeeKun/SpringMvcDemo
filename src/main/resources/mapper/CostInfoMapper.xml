@@ -59,10 +59,10 @@
     </update>
 
     <insert id="addCostInfo" parameterType="java.util.Map">
-        INSERT INTO `cost_info` (`id`,`account`, `costMoney`, `costDescription`, `costAddress`, `costTime`, `costPictureName`, `EXT1`, `EXT2`)
+        INSERT INTO `cost_info` (`account`, `costMoney`, `costDescription`, `costAddress`, `costTime`, `costPictureName`, `EXT2`)
           VALUES
-        (#{id,jdbcType=VARCHAR},#{account,jdbcType=VARCHAR}, #{costMoney,jdbcType=NUMERIC}, #{costDescription,jdbcType=VARCHAR}, #{costAddress,jdbcType=VARCHAR},
-        #{costTime,jdbcType=TIMESTAMP},#{costPictureName,jdbcType=VARCHAR},#{EXT1,jdbcType=VARCHAR},#{EXT2,jdbcType=NUMERIC});
+        (#{account,jdbcType=VARCHAR}, #{costMoney,jdbcType=NUMERIC}, #{costDescription,jdbcType=VARCHAR}, #{costAddress,jdbcType=VARCHAR},
+        #{costTime,jdbcType=TIMESTAMP},#{costPictureName,jdbcType=VARCHAR},#{EXT2,jdbcType=NUMERIC});
     </insert>
 
     <select id="checkUploadPictureOrNot" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">

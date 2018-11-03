@@ -44,7 +44,7 @@
                 <bean class="com.lk.util.RedisCache">
                     <property name="redisTemplate" ref="redisTemplate" />
                     <!--自定义一个value为User的缓存-->
-                    <property name="name" value="User"/>
+                    <property name="name" value="user"/>
                 </bean>
             </set>
         </property>

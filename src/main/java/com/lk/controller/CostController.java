@@ -264,7 +264,6 @@ public class CostController {
 	 * @return
 	 */
 	private boolean insertCostInfo(Map<String,Object> reqMap){
-		reqMap.put("id", UUID.randomUUID().toString());
 		reqMap.put("account",redisTemplate.opsForValue().get("account"));
 		int count = costInfoService.addCostInfo(reqMap);
 		if (count > 0) {

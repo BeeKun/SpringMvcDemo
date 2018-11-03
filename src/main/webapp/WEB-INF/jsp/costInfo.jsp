@@ -41,7 +41,11 @@
                         <td>${costInfo.costDescription }</td>
                         <td>${costInfo.costAddress }</td>
                         <td> ${costInfo.dateTemp}</td>
-                        <td><button type="button" class="btn btn-primary" onclick="downLoadPicture('${costInfo.id}')">下载</button></td>
+                        <td>
+                            <c:if test="${costInfo.costPictureName} !=null">
+                                <button type="button" class="btn btn-primary" onclick="downLoadPicture('${costInfo.id}')">下载</button>
+                            </c:if>
+                        </td>
                         <td style="display: none;">${costInfo.id }</td>
                     </tr>
                 </c:forEach>

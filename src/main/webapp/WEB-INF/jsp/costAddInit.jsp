@@ -54,13 +54,11 @@
     /**
      * 保存后，执行回调
      * @param responseText
-     * @param statusText
-     * @param xhr
-     * @param $form
      */
-    function showResponse(responseText, statusText, xhr, $form){
+    function showResponse(responseText){
         if(responseText.code == "00"){
             alert(responseText.msg);
+            window.open("/cost/costInfoPage");
         } else {
             alert(responseText.msg);
         }
