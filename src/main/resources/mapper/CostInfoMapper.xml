@@ -11,7 +11,7 @@
         <result column="costPictureName" property="costPictureName" jdbcType="VARCHAR" />
     </resultMap>
     <select id="selectCostInfoByMap" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
-        SELECT * FROM COST_INFO WHERE 1=1
+        SELECT * FROM cost_info WHERE 1=1
         <if test="id !=null and id !=''">
            AND id = #{id,jdbcType=VARCHAR}
         </if>
@@ -34,7 +34,7 @@
     </select>
 
     <update id="updateCostInfoByMap" parameterType="java.util.Map">
-        UPDATE COST_INFO
+        UPDATE cost_info
         <set>
             <if test="account !=null and account !=''">
                 account = #{account,jdbcType=VARCHAR},
@@ -66,7 +66,7 @@
     </insert>
 
     <select id="checkUploadPictureOrNot" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
-        SELECT costPictureName FROM COST_INFO WHERE 1=1 AND id = #{id,jdbcType=VARCHAR}
+        SELECT costPictureName FROM cost_info WHERE 1=1 AND id = #{id,jdbcType=VARCHAR}
     </select>
 
     <select id="selectDailyCostMoney" resultType="com.lk.bean.CostInfoDO" parameterType="java.util.Map">
