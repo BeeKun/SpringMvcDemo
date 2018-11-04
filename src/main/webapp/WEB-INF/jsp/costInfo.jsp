@@ -62,11 +62,11 @@
             <nav aria-lable="Page navigation">
                 <ul class="pagination">
 
-                    <li><a href="${path }/user/costInfoPage?pageNum=1">首页</a></li>
+                    <li><a href="${path }/cost/costInfoPage?pageNum=1">首页</a></li>
 
                     <c:if test="${pageInfo.hasPreviousPage  }">
                         <li>
-                            <a href="${path }/user/costInfoPage?pageNum=${pageInfo.pageNum-1}" aria-label="Previous">
+                            <a href="${path }/cost/costInfoPage?pageNum=${pageInfo.pageNum-1}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -77,19 +77,19 @@
                             <li class="active"><a href="${path }/user/costInfoPage?pageNum=${page}">${page}</a></li>
                         </c:if>
                         <c:if test="${page!=pageInfo.pageNum }">
-                            <li><a href="${path }/user/costInfoPage?pageNum=${page}">${page}</a></li>
+                            <li><a href="${path }/cost/costInfoPage?pageNum=${page}">${page}</a></li>
                         </c:if>
                     </c:forEach>
 
                     <c:if test="${pageInfo.hasNextPage }">
                         <li>
-                            <a href="${path }/user/costInfoPage?pageNum=${pageInfo.pageNum+1 }" aria-label="Next">
+                            <a href="${path }/cost/costInfoPage?pageNum=${pageInfo.pageNum+1 }" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
                     </c:if>
 
-                    <li><a href="${path }/user/costInfoPage?pageNum=${pageInfo.pages}">末页</a></li>
+                    <li><a href="${path }/cost/costInfoPage?pageNum=${pageInfo.pages}">末页</a></li>
 
                 </ul>
             </nav>
